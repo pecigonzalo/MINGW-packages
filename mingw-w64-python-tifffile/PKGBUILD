@@ -4,11 +4,12 @@
 _realname=tifffile
 pkgbase=mingw-w64-python-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-python-${_realname}")
-pkgver=2021.3.5
+pkgver=2021.7.2
 pkgrel=2
 pkgdesc="Read and write image data from and to TIFF files (mingw-w64)"
 arch=('any')
-url="https://github.com/cgohlke/tifffile"
+mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64')
+url='https://github.com/cgohlke/tifffile'
 license=('BSD-3-Clause')
 depends=("${MINGW_PACKAGE_PREFIX}-python-numpy")
 makedepends=("${MINGW_PACKAGE_PREFIX}-python-setuptools")
@@ -16,36 +17,37 @@ optdepends=("${MINGW_PACKAGE_PREFIX}-python-imagecodecs: required only for encod
             "${MINGW_PACKAGE_PREFIX}-python-matplotlib: required only for plotting"
             "${MINGW_PACKAGE_PREFIX}-python-lxml: required only for validating and printing XML")
 options=('staticlibs' 'strip' '!debug')
-source=("https://files.pythonhosted.org/packages/source/${_realname:0:1}/${_realname}/${_realname}-${pkgver}.tar.gz")
-sha256sums=('f55a4c8bcbfdd28157529c2e2a7c066da1636a202144f1696092b9290f52685d')
+source=("${_realname}-${pkgver}.tar.gz"::"https://github.com/cgohlke/${_realname}/archive/v${pkgver}.tar.gz")
+sha256sums=('394c6dc5ff40c3b8248d4b11be70cf0821d9c5762655d68d04489cd08b97786d')
 
 prepare() {
   cd "${srcdir}"
 
-  rm -rf python-build-${CARCH} | true
-  cp -r "${_realname}-${pkgver}" "python-build-${CARCH}"
+  rm -rf python-build-${MINGW_ARCH} || true
+  cp -r "${_realname}-${pkgver}" "python-build-${MINGW_ARCH}"
 }
 
 build() {
-  msg "Python build for ${CARCH}"
-  cd "${srcdir}/python-build-${CARCH}"
+  msg "Python build for ${MINGW_ARCH}"
+  cd "${srcdir}/python-build-${MINGW_ARCH}"
   ${MINGW_PREFIX}/bin/python setup.py build
 }
 
 check() {
-  msg "Python test for ${CARCH}"
-  cd "${srcdir}/python-build-${CARCH}"
+  msg "Python test for ${MINGW_ARCH}"
+  cd "${srcdir}/python-build-${MINGW_ARCH}"
   ${MINGW_PREFIX}/bin/python setup.py check --strict
 }
 
 package() {
-  cd "${srcdir}/python-build-${CARCH}"
+  cd "${srcdir}/python-build-${MINGW_ARCH}"
   MSYS2_ARG_CONV_EXCL="--prefix=;--install-scripts=;--install-platlib=" \
   ${MINGW_PREFIX}/bin/python setup.py install --prefix=${MINGW_PREFIX} \
     --root="${pkgdir}" --optimize=1 --skip-build
 
   install -Dm644 LICENSE "${pkgdir}${MINGW_PREFIX}/share/licenses/python-${_realname}/LICENSE"
 
+  # remove shebang line
   for _f in "${pkgdir}${MINGW_PREFIX}"/bin/*-script.py; do
     sed -e '1 { s/^#!.*$// }' -i ${_f}
   done

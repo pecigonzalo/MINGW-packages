@@ -1,10 +1,11 @@
 _realname=yosys
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=0.9.r10550.4e741adda
-pkgrel=1
+pkgver=0.9.r10805.c6681508f
+pkgrel=2
 pkgdesc="A framework for RTL synthesis tools (mingw-w64)"
 arch=('any')
+mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64')
 license=("ISC")
 url="http://www.clifford.at/yosys/"
 groups=("${MINGW_PACKAGE_PREFIX}-eda")
@@ -20,10 +21,10 @@ makedepends=(
   "${MINGW_PACKAGE_PREFIX}-python"
 )
 
-_commit='4e741add'
+_commit='c6681508'
 source=(
   "${_realname}::git://github.com/YosysHQ/${_realname}.git#commit=${_commit}"
-  "ghdl-yosys-plugin::git://github.com/ghdl/ghdl-yosys-plugin.git#commit=6671d04"
+  "ghdl-yosys-plugin::git://github.com/ghdl/ghdl-yosys-plugin.git#commit=98f4594b"
 )
 sha256sums=(
   'SKIP'

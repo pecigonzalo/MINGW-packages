@@ -8,9 +8,10 @@ _realname=bmake
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgver=20181221
-pkgrel=6
+pkgrel=7
 pkgdesc='Portable version of the NetBSD make build tool'
 arch=('any')
+mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64')
 url='http://www.crufty.net/help/sjg/bmake.html'
 license=(BSD)
 

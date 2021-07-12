@@ -3,10 +3,11 @@
 _realname=gr
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=0.55.0
-pkgrel=2
+pkgver=0.57.3
+pkgrel=1
 pkgdesc="A graphics library for visualisation applications (mingw-w64)"
-arch=("any")
+arch=(any)
+mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64')
 url="https://gr-framework.org/"
 license=("MIT")
 depends=("${MINGW_PACKAGE_PREFIX}-bzip2"
@@ -18,14 +19,14 @@ depends=("${MINGW_PACKAGE_PREFIX}-bzip2"
          "${MINGW_PACKAGE_PREFIX}-libpng"
          "${MINGW_PACKAGE_PREFIX}-libtiff"
          "${MINGW_PACKAGE_PREFIX}-qhull"
-         "${MINGW_PACKAGE_PREFIX}-qt5"
+         "${MINGW_PACKAGE_PREFIX}-qwt"
          "${MINGW_PACKAGE_PREFIX}-zlib")
 makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
              "${MINGW_PACKAGE_PREFIX}-ninja")
 options=("staticlibs" "strip" "!buildflags")
 source=("${_realname}-${pkgver}.tar.gz::https://github.com/sciapp/gr/archive/v${pkgver}.tar.gz")
 noextract=("${_realname}-${pkgver}.tar.gz")
-sha256sums=('070ca1cb0a54f90446e2cc0a0b331a112e0842e32a000bad2135e26ce09f5787')
+sha256sums=("4EA87656681BE64D50D457535A50F5DF4C77546DA5541702BDA1E49C5224ACEF")
 
 prepare() {
   # We can't use bsdtar to extract the archive because the archive includes
@@ -36,9 +37,6 @@ prepare() {
 
   # Set version manually, otherwise it resets to zero
   echo "${pkgver}" > version.txt
-
-  # Remove invalid C++ compiler option
-  sed -e "s|-Werror=implicit||g" -i CMakeLists.txt
 }
 
 build() {

@@ -3,9 +3,10 @@
 _realname=ngraph-gtk
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=6.09.01
+pkgver=6.09.03
 pkgrel=1
 arch=('any')
+mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64')
 pkgdesc="create scientific 2-dimensional graphs (mingw-w64)"
 depends=("${MINGW_PACKAGE_PREFIX}-adwaita-icon-theme"
          "${MINGW_PACKAGE_PREFIX}-gsettings-desktop-schemas"
@@ -22,7 +23,7 @@ options=('strip' 'staticlibs')
 license=("GPL")
 url="https://htrb.github.io/ngraph-gtk/"
 source=("https://github.com/htrb/ngraph-gtk/releases/download/v${pkgver}/ngraph-gtk-${pkgver}.tar.gz")
-sha256sums=("217c9a66b565d96fdd2055f00a521e5f0cd7f39e52896399ed684ef0638608bb")
+sha256sums=("f68cf457cff1905035c2b5b31d6d51aac3f9c81c1fcc8503877690a3988fdbf0")
 
 prepare() {
   cd "${srcdir}"/${_realname}-${pkgver}

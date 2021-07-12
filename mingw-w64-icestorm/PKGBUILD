@@ -3,10 +3,11 @@
 _realname=icestorm
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=0.0.r772.da52117
+pkgver=0.0.r777.c495861
 pkgrel=2
 pkgdesc="Simple tools for analyzing and creating bitstream files for Lattice iCE40 FPGAs (mingw-w64)"
 arch=('any')
+mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64' 'clang32')
 url="http://www.clifford.at/icestorm/"
 license=("ISC")
 groups=("${MINGW_PACKAGE_PREFIX}-eda")
@@ -16,7 +17,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "flex"
              "git")
 
-_commit="da52117"
+_commit="c495861c"
 source=("icestorm::git://github.com/YosysHQ/${_realname}.git#commit=${_commit}")
 sha256sums=('SKIP')
 

@@ -3,17 +3,19 @@
 _realname=gtk4
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=4.0.3
+pkgver=4.2.1
 pkgrel=2
 pkgdesc="GObject-based multi-platform GUI toolkit (v4) (mingw-w64)"
 arch=('any')
+mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64')
 url="https://www.gtk.org"
 license=("LGPL")
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-pkg-config"
              "${MINGW_PACKAGE_PREFIX}-gobject-introspection"
              "${MINGW_PACKAGE_PREFIX}-sassc"
-             "${MINGW_PACKAGE_PREFIX}-meson")
+             "${MINGW_PACKAGE_PREFIX}-meson"
+             "${MINGW_PACKAGE_PREFIX}-gtk-doc")
 depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs"
          "${MINGW_PACKAGE_PREFIX}-adwaita-icon-theme"
          "${MINGW_PACKAGE_PREFIX}-cairo"
@@ -24,12 +26,12 @@ depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs"
          "${MINGW_PACKAGE_PREFIX}-libepoxy"
          "${MINGW_PACKAGE_PREFIX}-pango"
          "${MINGW_PACKAGE_PREFIX}-gtk-update-icon-cache"
-         "${MINGW_PACKAGE_PREFIX}-gst-plugins-bad"
+         "${MINGW_PACKAGE_PREFIX}-gst-plugins-bad-libs"
          "${MINGW_PACKAGE_PREFIX}-ffmpeg"
          "${MINGW_PACKAGE_PREFIX}-vulkan-loader"
          "${MINGW_PACKAGE_PREFIX}-shared-mime-info")
 source=("https://download.gnome.org/sources/gtk/${pkgver:0:3}/gtk-${pkgver}.tar.xz")
-sha256sums=('d7c9893725790b50bd9a3bb278856d9d543b44b6b9b951d7b60e7bdecc131890')
+sha256sums=('023169775de43f0a1fde066fbc19d78545ea6a7562c1915abde9b8ae4a7309e6')
 
 prepare() {
   cd "${srcdir}/gtk-${pkgver}"
@@ -58,6 +60,9 @@ build() {
     -Dbuild-tests=false \
     -Dman-pages=true \
     -Dmacos-backend=false \
+    -Dx11-backend=false \
+    -Dwayland-backend=false \
+    -Dwin32-backend=true \
     -Dintrospection=enabled \
     ../gtk-${pkgver}
 

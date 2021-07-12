@@ -3,10 +3,11 @@
 _realname=mesa
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=21.0.0
+pkgver=21.1.3
 pkgrel=1
 pkgdesc="Open-source implementation of the OpenGL specification (mingw-w64)"
 arch=('any')
+mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64')
 makedepends=("${MINGW_PACKAGE_PREFIX}-llvm"
              "${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-python-mako"
@@ -25,7 +26,7 @@ license=('MIT')
 options=('staticlibs' 'strip')
 source=(https://mesa.freedesktop.org/archive/${_realname}-${pkgver}.tar.xz{,.sig}
         llvmwrapgen.sh)
-sha256sums=('e6204e98e6a8d77cf9dc5d34f99dd8e3ef7144f3601c808ca0dd26ba522e0d84'
+sha256sums=('cbe221282670875ffd762247b6a2c95dcee91d0a34c29802c75ef761fc891e69'
             'SKIP'
             '69f21522f20c10f5699dfe3e128aa88d4fedde816f6e8df1506d7470c44bf3da')
 validpgpkeys=('8703B6700E7EE06D7A39B8D6EDAE37B02CEB490D') # Emil Velikov <emil.l.velikov@gmail.com>
@@ -37,12 +38,15 @@ validpgpkeys+=('57551DE15B968F6341C248F68D8E31AFC32428A6') # Eric Engestrom <eri
 
 noextract=(${_realname}-${pkgver}.tar.xz)
 
-case ${MINGW_CHOST} in
-  i686*)
+case ${MSYSTEM} in
+  MINGW32)
     _mach=x86
   ;;
-  x86_64*)
+  MINGW64)
     _mach=x86_64
+  ;;
+  UCRT64)
+    _mach=ucrt-x86_64
   ;;
 esac
 
@@ -91,10 +95,11 @@ build() {
   -Dshared-llvm=enabled
   -Dosmesa=true
   -Dbuild-tests=true
+  -Dvulkan-drivers=swrast
   -Dgallium-drivers=swrast,zink"
 
-# Enable swr driver in x86_64 package
-  if [ ${_mach} = x86_64 ]; then
+# Enable swr driver in x86_64 packages
+  if [ ! ${_mach} = x86 ]; then
     buildconf="${buildconf},swr
     -Dswr-arches=avx,avx2,skx,knl"
   fi
@@ -110,7 +115,8 @@ build() {
   -Dc_args='-march=core2 -pipe' \
   -Dcpp_args='-march=core2 -pipe' \
   -Dc_link_args='-s' \
-  -Dcpp_link_args='-s'
+  -Dcpp_link_args='-s' \
+  -Dmicrosoft-clc=disabled
 
   ${MINGW_PREFIX}/bin/ninja -C ./build/windows-${_mach}
 }

@@ -3,27 +3,33 @@
 _realname=nextpnr
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=0.0.r2859.5e53a182
-pkgrel=2
+pkgver=0.0.r3600.9df05c4f
+pkgrel=1
 pkgdesc="Portable FPGA place and route tool (mingw-w64)"
 arch=('any')
+mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64')
 url="https://github.com/YosysHQ/nextpnr"
 license=('ISC')
 groups=("${MINGW_PACKAGE_PREFIX}-eda")
-depends=("${MINGW_PACKAGE_PREFIX}-boost"
-         "${MINGW_PACKAGE_PREFIX}-qt5"
-         "${MINGW_PACKAGE_PREFIX}-python")
-makedepends=("${MINGW_PACKAGE_PREFIX}-boost"
-             "${MINGW_PACKAGE_PREFIX}-cmake"
-             "${MINGW_PACKAGE_PREFIX}-eigen3"
-             "${MINGW_PACKAGE_PREFIX}-gcc"
-             "${MINGW_PACKAGE_PREFIX}-icestorm"
-             "${MINGW_PACKAGE_PREFIX}-openmp"
-             "${MINGW_PACKAGE_PREFIX}-python"
-             "${MINGW_PACKAGE_PREFIX}-qt5"
-             "git")
+depends=(
+  "${MINGW_PACKAGE_PREFIX}-boost"
+  "${MINGW_PACKAGE_PREFIX}-qt5"
+  "${MINGW_PACKAGE_PREFIX}-python"
+)
+makedepends=(
+  "${MINGW_PACKAGE_PREFIX}-boost"
+  "${MINGW_PACKAGE_PREFIX}-cmake"
+  "${MINGW_PACKAGE_PREFIX}-eigen3"
+  "${MINGW_PACKAGE_PREFIX}-gcc"
+  "${MINGW_PACKAGE_PREFIX}-icestorm"
+  "${MINGW_PACKAGE_PREFIX}-openmp"
+  "${MINGW_PACKAGE_PREFIX}-python"
+  "${MINGW_PACKAGE_PREFIX}-prjtrellis"
+  "${MINGW_PACKAGE_PREFIX}-qt5"
+  "git"
+)
 
-_commit="5e53a18"
+_commit="9df05c4f"
 source=("${_realname}::git://github.com/YosysHQ/${_realname}.git#commit=${_commit}")
 sha256sums=('SKIP')
 
@@ -34,15 +40,22 @@ pkgver() {
 
 build() {
   cd "${srcdir}/${_realname}"
+  git submodule update --init --recursive
+
+  unset _extra-archs
+  if [ "$CARCH" = "x86_64" ]; then
+    _extra_archs=";ecp5"
+  fi
 
   MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" cmake \
     -G "MSYS Makefiles" \
     -DICESTORM_INSTALL_PREFIX="${MINGW_PREFIX}" \
     -DCMAKE_PREFIX_PATH=${MINGW_PREFIX} \
     -DCMAKE_INSTALL_PREFIX="${MINGW_PREFIX}" \
-    -DARCH='generic;ice40' \
+    -DARCH="generic;ice40${_extra_archs}" \
     -DBUILD_HEAP=ON \
     -DUSE_OPENMP=ON \
+    -DUSE_IPO=OFF \
     -DBUILD_PYTHON=ON \
     -DBUILD_GUI=ON \
     -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \

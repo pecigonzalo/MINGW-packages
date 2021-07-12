@@ -1,23 +1,23 @@
 _realname=ghdl
 pkgbase="mingw-w64-${_realname}"
 pkgname='__placeholder__'
-pkgver=1.0.0
+pkgver=1.0.0.r348.g7d5c6c48
 pkgrel=1
 pkgdesc='GHDL: the open-source analyzer, compiler, simulator and (experimental) synthesizer for VHDL'
 arch=('any')
+mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64')
 license=('GPL2+')
 url='https://github.com/ghdl'
 groups=("${MINGW_PACKAGE_PREFIX}-eda")
 checkdepends=("${MINGW_PACKAGE_PREFIX}-python")
 provides=("${MINGW_PACKAGE_PREFIX}-${_realname}")
-_commit='2fb2384d'
-source=("${_realname}::git://github.com/ghdl/ghdl.git#commit=${_commit}")
+source=("${_realname}::git://github.com/ghdl/ghdl.git#commit=7d5c6c48")
 sha512sums=('SKIP')
 
-#pkgver() {
-#  cd "ghdl"
-#  git describe --long | sed 's/\([^-]*-g\)/r\1/;s/-/./g;s/^v//g'
-#}
+pkgver() {
+  cd "ghdl"
+  git describe --long | sed 's/\([^-]*-g\)/r\1/;s/-/./g;s/^v//g'
+}
 
 build() {
   [[ -d "${srcdir}"/build-${CARCH} ]] && rm -rf "${srcdir}"/build-${CARCH}
@@ -30,7 +30,7 @@ build() {
         --enable-checks \
         --enable-libghdl \
         --enable-synth \
-        LDFLAGS="-static"
+        LDFLAGS="-static -Wl,--stack=8388608"
   fi
 
   if [ "$CARCH" = "x86_64" ]; then

@@ -4,17 +4,19 @@
 _realname=pango
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=1.48.3
+pkgver=1.48.7
 pkgrel=1
 pkgdesc="A library for layout and rendering of text (mingw-w64)"
 arch=('any')
+mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64' 'clang32')
 url="https://www.pango.org/"
 license=('LGPL2.1')
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
             "${MINGW_PACKAGE_PREFIX}-pkg-config"
             "${MINGW_PACKAGE_PREFIX}-gobject-introspection"
             "${MINGW_PACKAGE_PREFIX}-meson"
-            "${MINGW_PACKAGE_PREFIX}-ninja")
+            "${MINGW_PACKAGE_PREFIX}-ninja"
+            "${MINGW_PACKAGE_PREFIX}-gi-docgen")
 depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs"
          "${MINGW_PACKAGE_PREFIX}-cairo"
          "${MINGW_PACKAGE_PREFIX}-freetype"
@@ -24,8 +26,15 @@ depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs"
          "${MINGW_PACKAGE_PREFIX}-fribidi"
          "${MINGW_PACKAGE_PREFIX}-libthai")
 options=('staticlibs' 'strip' 'emptydirs')
-source=("https://download.gnome.org/sources/pango/${pkgver:0:4}/${_realname}-${pkgver}.tar.xz")
-sha256sums=('36ea145c82217c8efc954d02aa577391b1d9a5da205e0aef7ffe0461349b4b46')
+source=("https://download.gnome.org/sources/pango/${pkgver:0:4}/${_realname}-${pkgver}.tar.xz"
+        "0001-fix-stdio-include.patch")
+sha256sums=('28a82f6a6cab60aa3b75a90f04197ead2d311fa8fe8b7bfdf8666e2781d506dc'
+            'a8a6dba43f6a3dd7b081b09c292cc9db7dcbffb94f1f5f9b7a4985b290cf1bfe')
+
+prepare() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+  patch -Np1 -i "${srcdir}/0001-fix-stdio-include.patch"
+}
 
 build() {
   cd "${srcdir}"
@@ -39,7 +48,7 @@ build() {
     --default-library shared \
     --buildtype plain \
     --auto-features=enabled \
-    -Dgtk_doc=false \
+    -Dgtk_doc=true \
     -Dxft=disabled \
     --wrap-mode=nofallback \
     ../${_realname}-${pkgver}
